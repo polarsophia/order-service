@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: order-service
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      uri: http://localhost:8888
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+      fail-fast: false
+      retry:
+        initial-interval: 1000
+        max-attempts: 3
+        max-interval: 5000
+        multiplier: 1.5
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+
+  r2dbc:
+    generate-unique-name: false
+    username: acdevs
+    password: 4444
+    url: r2dbc:postgresql://localhost:5432/order
+    pool:
+      initial-size: 5
+      max-size: 10
+      max-create-connection-time: 5s
+
+  datasource:
+    username: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+    url: jdbc:postgresql://localhost:5432/order
+  flyway:
+    enabled: true
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8090
+  shutdown: graceful
+  netty:
+    connection-timeout: 2s
+    idle-timeout: 15s
+
+polar:
+    catalog-service-uri: http://localhost:8080

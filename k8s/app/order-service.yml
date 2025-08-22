@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: order-service
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 5"]
+          ports:
+            - containerPort: 8090
+          env:
+            - name: BPL_JVM_THREAD_COUNT
+              value: '10'
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://polar-postgres:5432/order
+            - name: SPRING_R2DBC_URL
+              value: r2dbc:postgresql://polar-postgres:5432/order
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config-service
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  labels:
+    app: order-service
+spec:
+  type: ClusterIP
+  selector:
+    app: order-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8090
