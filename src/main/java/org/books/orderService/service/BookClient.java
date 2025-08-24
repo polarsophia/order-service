@@ -24,7 +24,7 @@ public class BookClient {
                 .uri(ROOT_API + "/{isbn}", isbn)
                 .retrieve()
                 .bodyToMono(Book.class)
-                .timeout(Duration.ofSeconds(2), Mono.empty())
+                .timeout(Duration.ofSeconds(5), Mono.empty())
                 .onErrorResume(WebClientResponseException.NotFound.class, e -> Mono.empty())
                 .retryWhen(Retry.backoff(3, Duration.ofMillis(100)))
                 .onErrorResume(Exception.class, e -> Mono.empty());

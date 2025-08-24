@@ -26,8 +26,8 @@ public class OrderService {
         this.bookClient = bookClient;
     }
 
-    public Flux<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Flux<Order> getAllOrders(String userId) {
+        return orderRepository.findAllByCreatedBy(userId);
     }
 
     @Transactional
@@ -64,6 +64,8 @@ public class OrderService {
                         OrderStatus.DISPATCHED,
                         order.createdAt(),
                         order.updatedAt(),
+                        order.createdBy(),
+                        order.updatedBy(),
                         order.version()
                 ))
                 .flatMap(orderRepository::save);

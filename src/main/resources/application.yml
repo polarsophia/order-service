@@ -15,7 +15,7 @@ spring:
         max-interval: 5000
         multiplier: 1.5
     function:
-      definition: dispatchOrder;acceptOrder
+      definition: dispatchOrder
     stream:
       bindings:
         dispatchOrder-in-0:
@@ -64,6 +64,11 @@ spring:
     password: 4444
     connection-timeout: 5s
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/PolarBookshop
 server:
   port: 8090
   shutdown: graceful
@@ -73,3 +78,9 @@ server:
 
 polar:
     catalog-service-uri: http://localhost:8080
+
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.web: DEBUG
+#    org.springframework.cloud: DEBUG
